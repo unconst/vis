@@ -7,7 +7,8 @@ from tqdm import tqdm
 
 def config():
     parser = argparse.ArgumentParser()   
-    parser.add_argument('--block_increment', type=int, help='blocks per resync', default=100) 
+    parser.add_argument('--block_increment', type=int, help='Blocks per resync', default=100) 
+    parser.add_argument('--queries_per_step', type=int, help='Number to query per request.', default=10) 
     bittensor.dendrite.add_args( parser )
     bittensor.logging.add_args( parser )
     bittensor.wallet.add_args( parser )
