@@ -16,6 +16,7 @@ def config():
     return bittensor.config( parser )
 
 def run(config):
+    last_block = -1
     while True:
         bittensor.logging( config )
         sub = bittensor.subtensor( config )
