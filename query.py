@@ -9,7 +9,7 @@ last_block = -1
 block_increment = 100
 while True:
     sub = bittensor.subtensor()
-    wallet = bittensor.wallet( name ='const', hotkey = 'Nero' )
+    wallet = bittensor.wallet()
     dend = bittensor.dendrite( wallet = wallet )
     block = sub.block
     if block - last_block < block_increment:
@@ -32,6 +32,6 @@ while True:
                 for i,(r,c,t) in enumerate(list( zip( r, c, t)) ):
                     data[int(uid + i)] = { "uid":int(uid + i), "code": c.item(), "time":t.item() }
             json.dump(data, open("data/queries/block-{}_batch-{}_seq-{}.txt".format(block,batch_size,sequence_length),'w'))
-            print ("+ queries/block{}-btc{}_seq{}.txt".format(block,batch_size,sequence_length))
+            print ("+ data/queries/block{}-btc{}_seq{}.txt".format(block,batch_size,sequence_length))
         except Exception as e:
             print(block, e)
