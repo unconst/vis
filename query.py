@@ -12,6 +12,7 @@ def config():
     bittensor.dendrite.add_args( parser )
     bittensor.logging.add_args( parser )
     bittensor.wallet.add_args( parser )
+    bittensor.subtensor.add_args( parser )
     return bittensor.config( parser )
 
 def run(config):
