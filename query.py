@@ -15,6 +15,28 @@ def config():
     bittensor.subtensor.add_args( parser )
     return bittensor.config( parser )
 
+
+def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
+    import signal
+
+    class TimeoutError(Exception):
+        pass
+
+    def handler(signum, frame):
+        raise TimeoutError()
+
+    # set the timeout handler
+    signal.signal(signal.SIGALRM, handler) 
+    signal.alarm(timeout_duration)
+    try:
+        result = func(*args, **kwargs)
+    except TimeoutError as exc:
+        result = default
+    finally:
+        signal.alarm(0)
+
+    return result
+
 def run(config):
     last_block = -1
     while True:
@@ -26,9 +48,9 @@ def run(config):
         if block - last_block < config.block_increment:
             time.sleep(5)
         else:
-            meta = bittensor.metagraph().sync()
-            try:
-                last_block = block
+            last_block = block
+            def get():
+                meta = bittensor.metagraph().sync()
                 batch_size = sub.validator_batch_size
                 sequence_length = sub.validator_sequence_length
                 start = 0
@@ -43,8 +65,8 @@ def run(config):
                         data[int(uid + i)] = { "uid":int(uid + i), "code": c.item(), "time":t.item() }
                 json.dump(data, open("data/queries/block{}_batch{}_seq{}.txt".format(block,batch_size,sequence_length),'w'))
                 print ("+ data/queries/block{}_btc{}_seq{}.txt".format(block,batch_size,sequence_length))
-            except Exception as e:
-                print(block, e)
+
+            timeout( get, timeout_duration = 12 * config.block_increment * 2 )
 
 if __name__ == "__main__":
     run( config() )
